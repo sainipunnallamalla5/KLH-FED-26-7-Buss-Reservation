@@ -1,0 +1,247 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
+
+// ==========================================
+// MODULE 4: Exceptions, Interfaces, OOP
+// ==========================================
+
+// Custom checked exception
+class BookingException extends Exception {
+    public BookingException(String message) {
+        super(message);
+    }
+}
+
+// Interface demonstrating "is-a" or "can-do" relationship
+interface Bookable {
+    void bookSeats(int tickets) throws BookingException;
+}
+
+// Class as blueprint, encapsulation, accessors/mutators
+class Bus implements Bookable {
+    private int id;
+    private String name;
+    private String route;
+    private int seats;
+    private double price;
+
+    // Parameterized constructor & 'this' reference
+    public Bus(int id, String name, String route, int seats, double price) {
+        this.id = id;
+        this.name = name;
+        this.route = route;
+        this.seats = seats;
+        this.price = price;
+    }
+
+    // Encapsulation (Getters)
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getRoute() { return route; }
+    public int getSeats() { return seats; }
+    public double getPrice() { return price; }
+
+    // Method Overriding & object representation
+    @Override
+    public String toString() {
+        return String.format("Bus %d: %-18s | Route: %-22s | Seats: %02d | Price: Rs. %.2f", 
+                             id, name, route, seats, price);
+    }
+
+    @Override
+    public void bookSeats(int tickets) throws BookingException {
+        // MODULE 2: Control flow (if-else)
+        if (tickets <= 0) {
+            throw new BookingException("Number of tickets must be greater than 0.");
+        } else if (tickets > this.seats) {
+            throw new BookingException("Sorry, only " + this.seats + " seats left.");
+        }
+        this.seats -= tickets; // Mutator logic
+    }
+}
+
+public class BusReservation {
+
+    public static void main(String[] args) {
+        // MODULE 1: Console I/O - Reading typed input
+        Scanner sc = new Scanner(System.in);
+
+        // MODULE 6: Collections Framework (ArrayList) & Generics
+        List<Bus> buses = new ArrayList<>();
+        buses.add(new Bus(1, "Green Line Express", "Hyderabad -> Bangalore", 40, 1200.0));
+        buses.add(new Bus(2, "Royal Travels", "Chennai -> Hyderabad", 35, 950.0));
+        buses.add(new Bus(3, "City Rider", "Pune -> Mumbai", 30, 450.0));
+        buses.add(new Bus(4, "Night Star", "Delhi -> Jaipur", 25, 700.0));
+        buses.add(new Bus(5, "Sky Coach", "Bangalore -> Goa", 20, 1500.0));
+
+        // MODULE 5: Library Algorithms (Collections.sort), Interfaces (Comparator)
+        // MODULE 6: Lambda expressions & Method References
+        buses.sort(Comparator.comparingDouble(Bus::getPrice));
+
+        // MODULE 3: 1D Array creation
+        String[] promoCodes = {"SAVE10", "FESTIVAL20"};
+
+        // MODULE 1: Primitive data types, Variables
+        int choice = 0;
+
+        // MODULE 2: Iteration (do-while loop)
+        do {
+            System.out.println("\n===== INTERCITY BUS RESERVATION =====");
+            System.out.println("1. View Available Buses");
+            System.out.println("2. Reserve Tickets");
+            System.out.println("3. View Promos");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+
+            // MODULE 4: Exception Handling (try-catch)
+            try {
+                choice = sc.nextInt();
+                sc.nextLine(); // Clear buffer
+
+                // MODULE 2: Switch statement
+                switch (choice) {
+                    case 1:
+                        displayBuses(buses);
+                        break;
+                    case 2:
+                        reserveTicket(sc, buses);
+                        break;
+                    case 3:
+                        displayPromos(promoCodes);
+                        break;
+                    case 4:
+                        System.out.println("Happy Journey!");
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please enter 1-4.");
+                }
+            } catch (InputMismatchException e) {
+                // MODULE 4: Unchecked exception handling
+                System.out.println("Error: Please enter a valid number.");
+                sc.nextLine(); // Clear the bad input
+            }
+
+        } while (choice != 4);
+
+        sc.close();
+    }
+
+    // ==========================================
+    // MODULE 3: Modular programming, Methods
+    // ==========================================
+    
+    static void displayBuses(List<Bus> buses) {
+        System.out.println("\n----------- AVAILABLE BUSES -----------");
+        // MODULE 6: Stream pipelines, terminal operation (forEach)
+        buses.forEach(System.out::println);
+        System.out.println("---------------------------------------");
+    }
+
+    // MODULE 3: Arrays & Enhanced for-loop
+    static void displayPromos(String[] promos) {
+        System.out.println("\n--- ACTIVE PROMO CODES ---");
+        for (String promo : promos) {
+            System.out.println("* " + promo);
+        }
+    }
+
+    // MODULE 3: Recursion (calculating reward points)
+    static int calculateRewards(int tickets) {
+        if (tickets <= 0) return 0; // Base case
+        return 50 + calculateRewards(tickets - 1); // Recursive case
+    }
+
+    static void reserveTicket(Scanner sc, List<Bus> buses) {
+        displayBuses(buses);
+
+        try {
+            System.out.print("Enter bus number (ID): ");
+            int busId = sc.nextInt();
+            sc.nextLine(); 
+
+            // MODULE 6: Stream pipeline (filter, findFirst) & Lambda Expressions
+            Bus selectedBus = buses.stream()
+                    .filter(b -> b.getId() == busId)
+                    .findFirst()
+                    .orElseThrow(() -> new BookingException("Invalid bus number selected."));
+
+            System.out.print("Enter passenger name: ");
+            String name = sc.nextLine();
+
+            // MODULE 5: String abstraction (trimming, validation, immutability)
+            if (name == null || name.trim().isEmpty()) {
+                throw new BookingException("Passenger name cannot be empty.");
+            }
+
+            System.out.print("Enter number of tickets: ");
+            int tickets = sc.nextInt();
+            sc.nextLine();
+
+            // Perform booking (throws exception if seats unavailable)
+            selectedBus.bookSeats(tickets);
+
+            // MODULE 1: Operators (Arithmetic)
+            double baseTotal = tickets * selectedBus.getPrice();
+            
+            System.out.print("Enter Promo Code (or leave blank): ");
+            String promoInput = sc.nextLine();
+            
+            double discount = 0;
+            // MODULE 5: String comparison using equals()
+            if (promoInput.trim().equalsIgnoreCase("SAVE10")) {
+                discount = baseTotal * 0.10;
+            }
+
+            double finalAmount = baseTotal - discount;
+            int rewards = calculateRewards(tickets); // MODULE 3: Recursion call
+
+            // MODULE 5: Mutable string handling (StringBuilder)
+            StringBuilder receipt = new StringBuilder();
+            receipt.append("\n======= RESERVATION CONFIRMED =======\n");
+            receipt.append("Passenger     : ").append(name.trim().toUpperCase()).append("\n");
+            receipt.append("Bus           : ").append(selectedBus.getName()).append("\n");
+            receipt.append("Tickets       : ").append(tickets).append("\n");
+            receipt.append(String.format("Base Amount   : Rs. %.2f\n", baseTotal));
+            receipt.append(String.format("Discount      : Rs. %.2f\n", discount));
+            receipt.append(String.format("Final Amount  : Rs. %.2f\n", finalAmount));
+            receipt.append("Reward Points : ").append(rewards).append("\n");
+            receipt.append("=====================================\n");
+
+            String finalReceipt = receipt.toString();
+            System.out.print(finalReceipt);
+
+            // Save to file
+            saveReceiptToFile(finalReceipt);
+
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Invalid input format.");
+            sc.nextLine(); 
+        } catch (BookingException e) {
+            // MODULE 4: Multi-catch / Exception Handling
+            System.out.println("Booking Failed: " + e.getMessage());
+        }
+    }
+
+    // MODULE 5: Modern Java APIs for File I/O (java.nio.file) & try-with-resources
+    static void saveReceiptToFile(String receiptContent) {
+        Path path = Paths.get("TicketReceipt.txt");
+        
+        try (BufferedWriter writer = Files.newBufferedWriter(path, 
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+            writer.write(receiptContent);
+            writer.write("---------------------------------------\n");
+            System.out.println("[System: Receipt saved to TicketReceipt.txt]");
+        } catch (IOException e) {
+            System.out.println("Warning: Could not save receipt to file. " + e.getMessage());
+        }
+    }
+}
