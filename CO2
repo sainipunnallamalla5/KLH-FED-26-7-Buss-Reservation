@@ -1,0 +1,16 @@
+// Iteration: do-while loop keeps the menu running
+do {
+    // Selection: switch statement handles menu choices
+    switch (choice) {
+        case 1: displayBuses(buses); break;
+        case 2: reserveTicket(sc, buses); break;
+        // ...
+    }
+} while (choice != 4);
+
+// Selection: if-else statements for logical validation
+if (tickets <= 0) {
+    throw new BookingException("Must be greater than 0.");
+} else if (tickets > this.seats) {
+    throw new BookingException("Not enough seats left.");
+}
