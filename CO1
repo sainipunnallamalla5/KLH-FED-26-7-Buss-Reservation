@@ -1,0 +1,9 @@
+// Console I/O for reading typed input
+Scanner sc = new Scanner(System.in);
+
+// Primitive variables and arithmetic operators
+int choice = 0;
+double baseTotal = tickets * selectedBus.getPrice();
+
+// Formatted printing using String.format logic
+System.out.printf("Base Amount   : Rs. %.2f\n", baseTotal);
