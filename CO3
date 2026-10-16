@@ -1,0 +1,15 @@
+// 1D Array creation
+String[] promoCodes = {"SAVE10", "FESTIVAL20"};
+
+// Method with an enhanced for-loop for array traversal
+static void displayPromos(String[] promos) {
+    for (String promo : promos) {
+        System.out.println("* " + promo);
+    }
+}
+
+// Recursion: Base case and recursive case
+static int calculateRewards(int tickets) {
+    if (tickets <= 0) return 0; 
+    return 50 + calculateRewards(tickets - 1); 
+}
