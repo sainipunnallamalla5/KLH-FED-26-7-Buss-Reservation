@@ -1,0 +1,15 @@
+// String manipulation and validation
+if (name == null || name.trim().isEmpty()) { ... }
+if (promoInput.trim().equalsIgnoreCase("SAVE10")) { ... }
+
+// Mutable String handling
+StringBuilder receipt = new StringBuilder();
+receipt.append("Passenger: ").append(name.trim().toUpperCase());
+
+// Modern File I/O with try-with-resources
+Path path = Paths.get("TicketReceipt.txt");
+try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
+    writer.write(finalReceipt);
+} catch (IOException e) {
+    System.out.println("Warning: Could not save receipt.");
+}
