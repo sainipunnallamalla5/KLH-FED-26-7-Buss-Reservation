@@ -1,0 +1,29 @@
+// Custom Checked Exception
+class BookingException extends Exception { ... }
+
+// Interface demonstrating "is-a" relationship
+interface Bookable {
+    void bookSeats(int tickets) throws BookingException;
+}
+
+// Class Blueprint & Encapsulation (private fields)
+class Bus implements Bookable {
+    private int id;
+    private int seats;
+
+    // Parameterized constructor and 'this' keyword
+    public Bus(int id, int seats) {
+        this.id = id;
+        this.seats = seats;
+    }
+
+    // Accessors (Getters)
+    public int getId() { return id; }
+}
+
+// Exception Handling: try-catch blocks
+try {
+    choice = sc.nextInt();
+} catch (InputMismatchException e) {
+    System.out.println("Error: Please enter a valid number.");
+}
