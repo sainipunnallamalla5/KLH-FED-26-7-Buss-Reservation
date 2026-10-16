@@ -1,0 +1,15 @@
+// Collections Framework: List API
+List<Bus> buses = new ArrayList<>();
+buses.add(new Bus(1, "Green Line Express", "Route", 40, 1200.0));
+
+// Library Algorithms & Lambda Expressions to sort
+buses.sort(Comparator.comparingDouble(Bus::getPrice));
+
+// Iterating collections with method references
+buses.forEach(System.out::println);
+
+// Stream pipelines: filter and terminal operation
+Bus selectedBus = buses.stream()
+        .filter(b -> b.getId() == busId)
+        .findFirst()
+        .orElseThrow(() -> new BookingException("Invalid bus number."));
